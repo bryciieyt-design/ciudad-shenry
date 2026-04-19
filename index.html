@@ -2,166 +2,155 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Shenry: Fog of Lima V3</title>
+    <title>SHENRY CORE: VOID</title>
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     <style>
-        body { margin: 0; overflow: hidden; background: #000; font-family: 'Courier New', monospace; }
+        body { margin: 0; overflow: hidden; background: #000; font-family: 'serif', 'Times New Roman'; }
+        
         #pantalla-inicio {
-            position: fixed; width: 100%; height: 100%; background: #050505;
+            position: fixed; width: 100%; height: 100%; 
+            background: radial-gradient(circle, #0a0a0a 0%, #000 100%);
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 2000; color: #7a0000; text-align: center;
+            z-index: 2000; color: #fff; text-align: center;
         }
-        #nombre-input { padding: 10px; font-size: 20px; background: #111; border: 1px solid #7a0000; color: #ff69b4; margin-bottom: 20px; text-align: center; }
-        #btn-jugar { padding: 15px 40px; background: #7a0000; color: white; border: none; cursor: pointer; font-weight: bold; }
+        #nombre-input { 
+            padding: 12px; font-size: 16px; background: transparent; 
+            border: none; border-bottom: 1px solid #333; color: #4facfe; 
+            margin-bottom: 30px; text-align: center; outline: none; width: 250px;
+        }
+        #btn-jugar { 
+            padding: 12px 50px; background: transparent; color: #fff; 
+            border: 1px solid #fff; cursor: pointer; font-size: 14px; 
+            letter-spacing: 3px;
+        }
         #hud {
-            position: fixed; top: 20px; left: 20px; width: 280px;
-            background: rgba(0, 0, 0, 0.4); padding: 15px; border-radius: 5px;
-            color: #ddd; z-index: 100; pointer-events: none; border-left: 3px solid #7a0000;
+            position: fixed; top: 30px; left: 30px; width: 300px;
+            background: rgba(0, 0, 0, 0.7); padding: 20px;
+            color: #eee; z-index: 100; pointer-events: none; 
+            border-left: 2px solid #4facfe; display: none;
         }
-        .proyecto-titulo { font-size: 14px; color: #ff69b4; margin-bottom: 8px; }
-        .objetivo { margin: 5px 0; font-size: 14px; }
-        #status-linterna { color: #ffaa00; font-size: 12px; margin-top: 5px; }
+        .proyecto-titulo { font-size: 12px; color: #4facfe; letter-spacing: 4px; margin-bottom: 10px; }
+        #status-linterna { color: #ffaa00; font-size: 11px; margin-top: 15px; }
     </style>
 </head>
 <body>
 
     <div id="pantalla-inicio">
-        <h1>SHENRY CORE</h1>
-        <p style="color: #666;">Controles: WASD + Mouse + P (Linterna)</p>
+        <h1 style="font-size: 50px; letter-spacing: 15px; color: #4facfe;">SHENRY</h1>
         <input type="text" id="nombre-input" value="Shenry" maxlength="15">
-        <button id="btn-jugar">INICIAR PROTOCOLO</button>
+        <button id="btn-jugar">CONECTAR</button>
     </div>
 
     <div id="hud">
         <div class="proyecto-titulo" id="display-nombre">PROYECTO: SHENRY</div>
-        <div class="objetivo">● RESCATAR NIÑAS (0/15)</div>
-        <div class="objetivo">● ELIMINAR A FRANCHIS BRI</div>
-        <div class="objetivo">● ESCAPAR</div>
-        <div id="status-linterna">LINTERNA: ENCENDIDA (P)</div>
+        <div style="font-size: 13px;">● RESCATAR NIÑAS (<span id="count">0</span>/15)</div>
+        <div id="status-linterna">LINTERNA: ACTIVA (P)</div>
     </div>
 
-    <a-scene fog="type: exponential; color: #010101; density: 0.1">
-        <a-sky color="#010101"></a-sky>
+    <a-scene fog="type: exponential; color: #000; density: 0.08">
+        
+        <a-sky color="#020205"></a-sky>
+        <a-entity id="stars-container"></a-entity>
+        
+        <a-sphere position="0 50 -100" radius="8" color="#fff" material="shader: flat; fog: false"></a-sphere>
+        <a-light type="directional" color="#4facfe" intensity="0.3" position="0 50 -100"></a-light>
 
         <a-entity id="rig" position="0 0 5">
-            
-            <a-entity id="body-parts">
-                <a-entity id="paticas">
-                    <a-box id="leg-l" color="#0a0a0a" width="0.05" height="0.6" depth="0.05" position="-0.2 0.3 0"></a-box>
-                    <a-box id="leg-r" color="#0a0a0a" width="0.05" height="0.6" depth="0.05" position="0.2 0.3 0"></a-box>
-                </a-entity>
+            <a-entity camera id="cam" look-controls="pointerLockEnabled: true" wasd-controls="acceleration: 80" position="0 1.6 0">
                 
-                <a-entity id="brazos" position="0 1.2 0">
-                    <a-box id="arm-l" color="#0a0a0a" width="0.05" height="0.5" depth="0.05" position="-0.4 0 -0.2" rotation="-20 0 0"></a-box>
-                    <a-box id="arm-r" color="#0a0a0a" width="0.05" height="0.5" depth="0.05" position="0.4 0 -0.3" rotation="-80 0 0">
-                        <a-cylinder color="#222" radius="0.04" height="0.2" position="0 0.25 0" rotation="90 0 0">
-                            <a-entity id="light-source" light="type: spot; intensity: 2; distance: 25; angle: 40; penumbra: 0.5" position="0 0.1 0" rotation="-90 0 0"></a-entity>
-                            <a-sphere color="#ffffaa" radius="0.03" position="0 0.1 0" material="shader: flat"></a-sphere>
-                        </a-cylinder>
-                    </a-box>
+                <a-entity id="cuerpo" position="0 -1.2 -1.5">
+                    <a-text value="S" color="#4facfe" align="center" width="10" font="exo2bold"
+                            animation="property: rotation; to: 0 360 0; loop: true; dur: 4000; easing: linear">
+                    </a-text>
+                    <a-light type="point" color="#4facfe" intensity="0.8" distance="5"></a-light>
+                    
+                    <a-entity id="foco-luz" light="type: spot; intensity: 2; distance: 40; angle: 40" position="0 0.5 0"></a-entity>
+                    <a-sphere id="vidrio" radius="0.05" color="#ffffaa" position="0 0.5 0" material="shader:flat; fog: false"></a-sphere>
                 </a-entity>
-            </a-entity>
 
-            <a-entity id="camera" camera look-controls="pointerLockEnabled: true" wasd-controls="acceleration: 100" position="0 1.6 0">
-                <a-entity cursor position="0 0 -1" geometry="primitive: ring; radiusInner: 0.005; radiusOuter: 0.01" material="color: #7a0000; shader: flat"></a-entity>
+                <a-entity cursor position="0 0 -1" geometry="primitive: ring; radiusInner: 0.005; radiusOuter: 0.008" material="color: #4facfe; shader: flat"></a-entity>
             </a-entity>
         </a-entity>
 
-        <a-plane position="0 0 0" rotation="-90 0 0" width="1000" height="1000" color="#0a1a05"></a-plane>
+        <a-plane rotation="-90 0 0" width="2000" height="2000" color="#050505"></a-plane>
         
-        <a-entity position="0 0 -50">
-            <a-box class="edificio" position="-15 10 -10" width="10" height="20" depth="10" color="#111"></a-box>
-            <a-box class="barrera" position="-15 2 -10" width="11" height="5" depth="11" material="visible: false"></a-box>
+        <a-text class="niña" value="Y" position="5 1.2 -10" color="#ff69b4" align="center" width="12"></a-text>
+        <a-text class="niña" value="Y" position="-10 1.2 -25" color="#ff69b4" align="center" width="12"></a-text>
 
-            <a-box class="edificio" position="15 10 -30" width="12" height="25" depth="12" color="#0a0a0a"></a-box>
-            <a-box class="barrera" position="15 2 -30" width="13" height="5" depth="13" material="visible: false"></a-box>
-            
-            <a-entity position="0 0 -5">
-                <a-cylinder color="#222" radius="0.1" height="4"></a-cylinder>
-                <a-sphere position="0 4 0" radius="0.2" color="#ffaa00" material="shader: flat"></a-sphere>
-                <a-light type="point" intensity="0.8" distance="10" color="#ffaa00"></a-light>
-                <a-cylinder class="barrera" radius="0.5" height="4" material="visible: false"></a-cylinder>
-            </a-entity>
+        <a-entity id="franchis" position="0 1.8 -20">
+            <a-text value="F" color="red" align="center" width="30" material="shader: flat"></a-text>
         </a-entity>
-
-        <a-text id="villano" value="F" color="#7a0000" position="0 2 -15" align="center" width="20"></a-text>
 
     </a-scene>
 
     <script>
-        let activo = false;
-        let linternaEncendida = true;
-        let walkCycle = 0;
-
-        const btnJugar = document.getElementById('btn-jugar');
-        const rig = document.getElementById('rig');
-        const cam = document.getElementById('camera');
-        const luz = document.getElementById('light-source');
-        const villano = document.getElementById('villano');
-        const barreras = document.querySelectorAll('.barrera');
-        const legs = [document.getElementById('leg-l'), document.getElementById('leg-r')];
-        const arms = [document.getElementById('arm-l'), document.getElementById('arm-r')];
-
-        btnJugar.addEventListener('click', () => {
-            const nombre = document.getElementById('nombre-input').value.toUpperCase();
-            document.getElementById('display-nombre').innerText = `PROYECTO: ${nombre}`;
-            document.getElementById('pantalla-inicio').style.display = 'none';
-            cam.components['look-controls'].requestPointerLock();
-            activo = true;
-        });
-
-        // Control de Linterna con tecla P
-        window.addEventListener('keydown', (e) => {
-            if (e.code === 'KeyP' && activo) {
-                linternaEncendida = !linternaEncendida;
-                luz.setAttribute('light', 'intensity', linternaEncendida ? 2 : 0);
-                document.getElementById('status-linterna').innerText = `LINTERNA: ${linternaEncendida ? 'ENCENDIDA' : 'APAGADA'} (P)`;
-            }
-        });
-
-        function loop() {
-            if (activo) {
-                let p = rig.getAttribute('position');
-                let rotY = cam.getAttribute('rotation').y;
-
-                // 1. COLISIONES POR BARRERAS INVISIBLES
-                barreras.forEach(b => {
-                    let bp = b.object3D.position;
-                    let bw = b.getAttribute('width') / 2 || b.getAttribute('radius');
-                    let bd = b.getAttribute('depth') / 2 || b.getAttribute('radius');
-                    
-                    // Ajustar posición si entra en el área de la barrera
-                    if (Math.abs(p.x - bp.x) < bw + 0.5 && Math.abs(p.z - (bp.z - 50)) < bd + 0.5) {
-                        // Empujoncito hacia afuera
-                        p.x += (p.x > bp.x) ? 0.1 : -0.1;
-                        p.z += (p.z > (bp.z - 50)) ? 0.1 : -0.1;
-                        rig.setAttribute('position', p);
-                    }
-                });
-
-                // 2. ANIMACIÓN DE CAMINATA (Paticas y Brazos)
-                // Solo si se presionan las teclas WASD
-                walkCycle += 0.15;
-                let wave = Math.sin(walkCycle) * 0.2;
-                
-                legs[0].setAttribute('position', {x: -0.2, y: 0.3 + wave, z: 0});
-                legs[1].setAttribute('position', {x: 0.2, y: 0.3 - wave, z: 0});
-                
-                // Los brazos se mueven sutilmente
-                arms[0].setAttribute('rotation', {x: -20 + (wave*20), y: 0, z: 0});
-                arms[1].setAttribute('rotation', {x: -80 + (wave*10), y: 0, z: 0});
-
-                // 3. SEGUIMIENTO DEL VILLANO
-                let vp = villano.getAttribute('position');
-                villano.setAttribute('position', {
-                    x: vp.x + (p.x - vp.x) * 0.008,
-                    y: 2,
-                    z: vp.z + (p.z - vp.z) * 0.008
-                });
-            }
-            requestAnimationFrame(loop);
+        // Generador de estrellas corregido
+        const starsContainer = document.getElementById('stars-container');
+        for (let i = 0; i < 500; i++) {
+            let star = document.createElement('a-sphere');
+            let x = (Math.random() - 0.5) * 400;
+            let y = Math.random() * 100 + 10;
+            let z = (Math.random() - 0.5) * 400;
+            star.setAttribute('position', {x: x, y: y, z: z});
+            star.setAttribute('radius', Math.random() * 0.25);
+            star.setAttribute('color', '#fff');
+            star.setAttribute('material', 'shader: flat; fog: false');
+            starsContainer.appendChild(star);
         }
-        loop();
+
+        var jugando = false;
+        var luzOk = true;
+        var nenasCont = 0;
+
+        document.getElementById('btn-jugar').addEventListener('click', () => {
+            document.getElementById('display-nombre').innerText = "PROYECTO: " + document.getElementById('nombre-input').value.toUpperCase();
+            document.getElementById('pantalla-inicio').style.display = 'none';
+            document.getElementById('hud').style.display = 'block';
+            
+            // Bloquear el mouse para mover la cámara libremente
+            document.querySelector('a-scene').canvas.requestPointerLock();
+            jugando = true;
+        });
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key.toLowerCase() === 'f') e.preventDefault();
+            if (e.key.toLowerCase() === 'p' && jugando) {
+                luzOk = !luzOk;
+                document.getElementById('foco-luz').setAttribute('light', 'intensity', luzOk ? 2 : 0);
+                document.getElementById('vidrio').setAttribute('visible', luzOk);
+                document.getElementById('status-linterna').innerText = "LINTERNA: " + (luzOk ? "ACTIVA (P)" : "OFF (P)");
+            }
+        });
+
+        function tick() {
+            if (!jugando) { requestAnimationFrame(tick); return; }
+            var pPos = document.getElementById('rig').getAttribute('position');
+            var v = document.getElementById('franchis');
+            var vPos = v.getAttribute('position');
+
+            // IA acechante
+            var d = Math.sqrt(Math.pow(pPos.x-vPos.x,2) + Math.pow(pPos.z-vPos.z,2));
+            if(d > 4) {
+                vPos.x += (pPos.x - vPos.x) * 0.007;
+                vPos.z += (pPos.z - vPos.z) * 0.007;
+            }
+            v.setAttribute('position', vPos);
+
+            // Recoger Niñas
+            document.querySelectorAll('.niña').forEach(n => {
+                if(n.getAttribute('visible')){
+                    let np = n.getAttribute('position');
+                    if(Math.sqrt(Math.pow(pPos.x-np.x,2)+Math.pow(pPos.z-np.z,2)) < 2){
+                        n.setAttribute('visible', false);
+                        nenasCont++;
+                        document.getElementById('count').innerText = nenasCont;
+                    }
+                }
+            });
+
+            requestAnimationFrame(tick);
+        }
+        tick();
     </script>
 </body>
 </html>
