@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Shenry: Ciudad Limeña Sólida</title>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-physics-system@v4.0.1/dist/aframe-physics-system.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+    <style>
+      body { margin: 0; overflow: hidden; background: #0a0805; }
+      #ui {
+        position: fixed; top: 10px; left: 10px; color: #ff69b4;
+        font-family: 'Courier New', monospace; font-size: 18px; z-index: 100;
+        background: rgba(0,0,0,0.8); padding: 10px; border-radius: 4px;
+        pointer-events: none;
+      }
+      #instrucciones {
+        position: fixed; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.95); color: #ccc;
+        display: flex; justify-content: center; align-items: center;
+        z-index: 1000; font-family: sans-serif; text-align: center; cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+
+    <div id="instrucciones">
+      <div>
+        <h1 style="color: #fff; font-size: 40px;">CIUDAD LIMEÑA</h1>
+        <p>Haz CLIC para iniciar</p>
+        <p>Los muros son sólidos y la X roja te seguirá</p>
+        <p>W, A, S, D para moverte | MOUSE para mirar | ESPACIO para saltar</p>
+      </div>
+    </div>
+
+    <div id="ui">RESCATES (Y): <span id="contador">0</span>/5</div>
+
+    <a-scene physics="gravity: -15; debug: false; iterations: 10">
+      
+      <a-sky color="#0a0805"></a-sky>
+
+      <a-entity position="0 100 0">
+        <a-sphere position="15 40 -50" radius="0.15" color="#fff" shader="flat"></a-sphere>
+        <a-sphere position="-25 50 15" radius="0.1" color="#fff" shader="flat"></a-sphere>
+        <a-sphere position="50 60 -120" radius="0.2" color="#fff" shader="flat"></a-sphere>
+        <a-sphere position="-70 45 -15" radius="0.15" color="#fff" shader="flat"></a-sphere>
+      </a-entity>
+      <a-sphere position="60 90 -180" radius="9" color="#eee" material="shader: flat; opacity: 0.6"></a-sphere>
+
+      <a-entity id="player"
+                camera
+                position="0 1.6 15"
+                look-controls="pointerLockEnabled: true"
+                wasd-controls="acceleration: 85"
+                kinematic-body="radius: 0.5; height: 1.6">
+        <a-light type="spot" intensity="1.8" distance="35" angle="35" penumbra="0.5" color="#fff"></a-light>
+        <a-entity cursor="fuse: false" position="0 0 -1" geometry="primitive: ring; radiusInner: 0.005; radiusOuter: 0.01" material="color: white; shader: flat"></a-entity>
+      </a-entity>
+
+      <a-plane color="#050505" rotation="-90 0 0" width="2000" height="2000" static-body></a-plane>
+
+      <a-entity id="entorno">
+        <a-box class="obstaculo" position="-12 10 -25" width="10" height="20" depth="10" color="#1a1510" static-body></a-box>
+        <a-box class="obstaculo" position="25 15 -40" width="12" height="30" depth="12" color="#221d18" static-body></a-box>
+        <a-box class="obstaculo" position="-30 8 25" width="15" height="16" depth="15" color="#1a1a1a" static-body></a-box>
+        <a-box class="obstaculo" position="40 18 10" width="10" height="36" depth="10" color="#14110f" static-body></a-box>
+        <a-box class="obstaculo" position="0 30 -100" width="40" height="60" depth="20" color="#0a0a0a" static-body></a-box>
+        
+        <a-entity class="farol-obstaculo" position="5 0 -5">
+            <a-cylinder color="#222" height="4" radius="0.2" static-body></a-cylinder>
+            <a-sphere position="0 4 0" radius="0.3" color="#ffaa00" material="shader: flat"></a-sphere>
+            <a-light type="point" intensity="1.2" distance="18" color="#ffaa00" position="0 3.5 0"></a-light>
+        </a-entity>
+
+        <a-entity class="farol-obstaculo" position="-15 0 15">
+            <a-cylinder color="#222" height="4" radius="0.2" static-body></a-cylinder>
+            <a-sphere position="0 4 0" radius="0.3" color="#ffaa00" material="shader: flat"></a-sphere>
+            <a-light type="point" intensity="1.2" distance="18" color="#ffaa00" position="0 3.5 0"></a-light>
+        </a-entity>
+      </a-entity>
+
+      <a-text class="salvable" value="Y" color="#ff69b4" position="5 1.5 -10" align="center" width="18" look-at="#player"></a-text>
+      <a-text class="salvable" value="Y" color="#ff69b4" position="-18 1.5 -28" align="center" width="18" look-at="#player"></a-text>
+      <a-text class="salvable" value="Y" color="#ff69b4" position="28 1.5 18" align="center" width="18" look-at="#player"></a-text>
+      <a-text class="salvable" value="Y" color="#ff69b4" position="-35 1.5 8" align="center" width="18" look-at="#player"></a-text>
+      <a-text class="salvable" value="Y" color="#ff69b4" position="0 1.5 -60" align="center" width="18" look-at="#player"></a-text>
+
+      <a-entity id="villano" position="15 2.5 -20">
+        <a-text value="X" color="#ff0000" align="center" width="30" look-at="#player"></a-text>
+      </a-entity>
+
+    </a-scene>
+
+    <script>
+      let score = 0;
+      let activo = false;
+      let puedeSaltar = true;
+
+      const p = document.querySelector('#player');
+      const v = document.querySelector('#villano');
+      const ninas = document.querySelectorAll('.salvable');
+      const cap = document.querySelector('#instrucciones');
+      const scene = document.querySelector('a-scene');
+
+      cap.addEventListener('click', () => {
+        p.components['look-controls'].requestPointerLock();
+        cap.style.display = 'none';
+        activo = true;
+      });
+
+      // Lógica de Salto (Telemportación vertical instantánea para AABB)
+      window.addEventListener('keydown', (e) => {
+        if (activo && e.code === 'Space' && puedeSaltar) {
+          p.object3D.position.y += 4; // Salto vertical de 4 unidades
+          puedeSaltar = false;
+          // Pequeño cooldown para no saltar en el aire
+          setTimeout(() => { puedeSaltar = true; }, 800);
+        }
+      });
+
+      function loop() {
+        if (!activo) { requestAnimationFrame(loop); return; }
+
+        let pPos = p.object3D.position;
+        let vPos = v.object3D.position;
+
+        // --- SISTEMA DE FÍSICAS INTEGRADAS ---
+        // A-Frame Physics System se encarga de las colisiones en static-body.
+        // Si chocas, simplemente te detendrás.
+
+        // --- BUCLE INFINITO DEL MAPA ---
+        if (Math.abs(pPos.x) > 800) pPos.x *= -0.98;
+        if (Math.abs(pPos.z) > 800) pPos.z *= -0.98;
+
+        // --- VILLANO PERSIGUIENDO (FRANCHIS BRI) ---
+        // Movimiento suave pero constante hacia el jugador
+        vPos.x += (pPos.x - vPos.x) * 0.015; // Velocidad de seguimiento aumentada
+        vPos.z += (pPos.z - vPos.z) * 0.015;
+
+        // --- RESCATE ---
+        ninas.forEach(n => {
+          if (n.getAttribute('visible') !== false) {
+            // Distancia en 3D para el rescate
+            if (pPos.distanceTo(n.object3D.position) < 2.8) {
+              n.setAttribute('visible', false);
+              score++;
+              document.querySelector('#contador').innerText = score;
+              if(score >= 5) alert("¡Misión cumplida, Shenry!");
+            }
+          }
+        });
+
+        requestAnimationFrame(loop);
+      }
+      loop();
+    </script>
+  </body>
+</html>
