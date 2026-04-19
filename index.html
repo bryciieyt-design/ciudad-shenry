@@ -2,19 +2,19 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Shenry: Ciudad de Hierro</title>
+    <title>Shenry: Ciudad Blindada</title>
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script>
     <style>
-      body { margin: 0; overflow: hidden; background: #050403; }
+      body { margin: 0; overflow: hidden; background: #0a0805; }
       #ui {
         position: fixed; top: 10px; left: 10px; color: #ff69b4;
         font-family: 'Courier New', monospace; font-size: 18px; z-index: 100;
-        background: rgba(0,0,0,0.8); padding: 10px; border-radius: 4px; pointer-events: none;
+        background: rgba(0,0,0,0.85); padding: 12px; border-radius: 4px; border: 1px solid #ff69b4;
       }
       #instrucciones {
         position: fixed; width: 100%; height: 100%;
-        background: rgba(0,0,0,0.95); color: #ccc;
+        background: rgba(0,0,0,0.98); color: #ccc;
         display: flex; justify-content: center; align-items: center;
         z-index: 1000; font-family: sans-serif; text-align: center; cursor: pointer;
       }
@@ -24,55 +24,56 @@
 
     <div id="instrucciones">
       <div>
-        <h1 style="color: #fff;">CIUDAD LIMEÑA SÓLIDA</h1>
-        <p>Haz CLIC para iniciar el rescate</p>
+        <h1 style="color: #fff; font-size: 45px; margin-bottom: 10px;">CIUDAD INFRANQUEABLE</h1>
+        <p style="font-size: 20px;">CLIC PARA EMPEZAR</p>
         <p><b>W, A, S, D</b> para caminar | <b>ESPACIO</b> para saltar</p>
-        <p>El suelo y los muros son ahora infranqueables.</p>
+        <p style="color: #ffaa00;">Suelo fijado por código. No te puedes caer.</p>
       </div>
     </div>
 
-    <div id="ui">RESCATES (Y): <span id="contador">0</span>/5</div>
+    <div id="ui">NIÑAS RESCATADAS (Y): <span id="contador">0</span>/5</div>
 
-    <a-scene fog="type: exponential; color: #0a0805; density: 0.04">
+    <a-scene fog="type: exponential; color: #0a0805; density: 0.03">
       <a-sky color="#0a0805"></a-sky>
 
-      <a-entity id="rig" position="0 0 10">
-        <a-entity id="player" camera look-controls="pointerLockEnabled: true" wasd-controls="acceleration: 65" position="0 1.6 0">
-          <a-light type="spot" intensity="1.8" distance="35" angle="35" penumbra="0.5" color="#fff"></a-light>
+      <a-entity id="rig" position="0 0 0">
+        <a-entity id="player" camera look-controls="pointerLockEnabled: true" position="0 1.6 0">
+          <a-light type="spot" intensity="2" distance="40" angle="35" penumbra="0.5" color="#fff"></a-light>
           <a-entity cursor="fuse: false" position="0 0 -1" geometry="primitive: ring; radiusInner: 0.005; radiusOuter: 0.01" material="color: white; shader: flat"></a-entity>
         </a-entity>
       </a-entity>
 
-      <a-plane id="piso" position="0 0 0" rotation="-90 0 0" width="4000" height="4000" color="#080705"></a-plane>
+      <a-plane position="0 -0.01 0" rotation="-90 0 0" width="5000" height="5000" color="#0d0d0d"></a-plane>
+      <a-grid width="5000" height="5000" static-body material="opacity: 0.1; color: #444"></a-grid>
 
-      <a-entity id="entorno">
-        <a-box class="solido" position="-15 10 -25" width="10" height="20" depth="10" color="#1a1510"></a-box>
-        <a-box class="solido" position="25 15 -50" width="12" height="30" depth="12" color="#221d18"></a-box>
-        <a-box class="solido" position="-35 8 30" width="15" height="16" depth="15" color="#1a1a1a"></a-box>
-        <a-box class="solido" position="45 15 20" width="8" height="30" depth="8" color="#14110f"></a-box>
-        <a-box class="solido" position="0 25 -120" width="50" height="50" depth="25" color="#050505"></a-box>
+      <a-entity id="mapeo">
+        <a-box class="muro" position="-20 10 -30" width="15" height="20" depth="15" color="#1a1510"></a-box>
+        <a-box class="muro" position="30 15 -60" width="12" height="30" depth="12" color="#221d18"></a-box>
+        <a-box class="muro" position="-40 8 40" width="20" height="16" depth="20" color="#141414"></a-box>
+        <a-box class="muro" position="50 20 20" width="10" height="40" depth="10" color="#1a1a1a"></a-box>
+        <a-box class="muro" position="0 30 -150" width="60" height="60" depth="30" color="#050505"></a-box>
         
-        <a-entity class="poste" position="10 0 -15">
-            <a-cylinder color="#222" height="4" radius="0.25"></a-cylinder>
-            <a-sphere position="0 4 0" radius="0.3" color="#ffaa00" material="shader: flat"></a-sphere>
-            <a-light type="point" intensity="1.5" distance="20" color="#ffaa00" position="0 3.8 0"></a-light>
+        <a-entity class="poste" position="12 0 -15">
+            <a-cylinder color="#222" height="5" radius="0.3"></a-cylinder>
+            <a-sphere position="0 5 0" radius="0.4" color="#ffaa00" material="shader: flat"></a-sphere>
+            <a-light type="point" intensity="2" distance="25" color="#ffaa00" position="0 4.5 0"></a-light>
         </a-entity>
 
-        <a-entity class="poste" position="-20 0 15">
-            <a-cylinder color="#222" height="4" radius="0.25"></a-cylinder>
-            <a-sphere position="0 4 0" radius="0.3" color="#ffaa00" material="shader: flat"></a-sphere>
-            <a-light type="point" intensity="1.5" distance="20" color="#ffaa00" position="0 3.8 0"></a-light>
+        <a-entity class="poste" position="-25 0 20">
+            <a-cylinder color="#222" height="5" radius="0.3"></a-cylinder>
+            <a-sphere position="0 5 0" radius="0.4" color="#ffaa00" material="shader: flat"></a-sphere>
+            <a-light type="point" intensity="2" distance="25" color="#ffaa00" position="0 4.5 0"></a-light>
         </a-entity>
       </a-entity>
 
-      <a-text class="salvable" value="Y" color="#ff69b4" position="10 1.5 -10" align="center" width="15" look-at="#player"></a-text>
-      <a-text class="salvable" value="Y" color="#ff69b4" position="-25 1.5 -35" align="center" width="15" look-at="#player"></a-text>
-      <a-text class="salvable" value="Y" color="#ff69b4" position="35 1.5 15" align="center" width="15" look-at="#player"></a-text>
-      <a-text class="salvable" value="Y" color="#ff69b4" position="-45 1.5 5" align="center" width="15" look-at="#player"></a-text>
-      <a-text class="salvable" value="Y" color="#ff69b4" position="0 1.5 -80" align="center" width="15" look-at="#player"></a-text>
+      <a-text class="salvable" value="Y" color="#ff69b4" position="15 1.5 -15" align="center" width="20" look-at="#player"></a-text>
+      <a-text class="salvable" value="Y" color="#ff69b4" position="-30 1.5 -40" align="center" width="20" look-at="#player"></a-text>
+      <a-text class="salvable" value="Y" color="#ff69b4" position="40 1.5 30" align="center" width="20" look-at="#player"></a-text>
+      <a-text class="salvable" value="Y" color="#ff69b4" position="-50 1.5 10" align="center" width="20" look-at="#player"></a-text>
+      <a-text class="salvable" value="Y" color="#ff69b4" position="5 1.5 -100" align="center" width="20" look-at="#player"></a-text>
 
-      <a-entity id="villano" position="20 2 -30">
-        <a-text value="X" color="#ff0000" align="center" width="25" look-at="#player"></a-text>
+      <a-entity id="villano" position="25 2.5 -40">
+        <a-text value="X" color="#ff0000" align="center" width="30" look-at="#player"></a-text>
       </a-entity>
 
     </a-scene>
@@ -80,93 +81,110 @@
     <script>
       let score = 0;
       let activo = false;
-      let vy = 0; 
-      let saltando = false;
-      let posPrevia = { x: 0, z: 10 };
+      let pos = { x: 0, y: 0, z: 10 };
+      let velY = 0;
+      let enSuelo = true;
+      let teclas = {};
 
       const rig = document.querySelector('#rig');
-      const p = document.querySelector('#player');
-      const v = document.querySelector('#villano');
-      const ninas = document.querySelectorAll('.salvable');
-      const edificios = document.querySelectorAll('.solido');
+      const cam = document.querySelector('#player');
+      const villano = document.querySelector('#villano');
+      const muros = document.querySelectorAll('.muro');
       const postes = document.querySelectorAll('.poste');
+      const ninas = document.querySelectorAll('.salvable');
       const cap = document.querySelector('#instrucciones');
 
       cap.addEventListener('click', () => {
-        p.components['look-controls'].requestPointerLock();
+        cam.components['look-controls'].requestPointerLock();
         cap.style.display = 'none';
         activo = true;
       });
 
-      // Tecla Espacio para Saltar
-      window.addEventListener('keydown', (e) => {
-        if (e.code === 'Space' && !saltando && activo) {
-          vy = 0.28; 
-          saltando = true;
-        }
-      });
+      window.addEventListener('keydown', e => { teclas[e.code] = true; });
+      window.addEventListener('keyup', e => { teclas[e.code] = false; });
 
       function loop() {
         if (!activo) { requestAnimationFrame(loop); return; }
 
-        let rPos = rig.object3D.position;
+        let antX = pos.x;
+        let antZ = pos.z;
 
-        // --- GRAVEDAD Y SALTO (IMPIDE CAER) ---
-        if (saltando) {
-          rPos.y += vy;
-          vy -= 0.015; // Fuerza de gravedad
-          if (rPos.y <= 0) {
-            rPos.y = 0;
-            saltando = false;
-            vy = 0;
-          }
-        } else {
-            rPos.y = 0; // Forzar contacto con el suelo
+        // --- MOTOR DE MOVIMIENTO MANUAL (Ignora la física del navegador) ---
+        let rotation = cam.getAttribute('rotation');
+        let angle = rotation.y * Math.PI / 180;
+        let speed = 0.15;
+
+        if (teclas['KeyW']) {
+          pos.x -= Math.sin(angle) * speed;
+          pos.z -= Math.cos(angle) * speed;
+        }
+        if (teclas['KeyS']) {
+          pos.x += Math.sin(angle) * speed;
+          pos.z += Math.cos(angle) * speed;
+        }
+        if (teclas['KeyA']) {
+          pos.x -= Math.cos(angle) * speed;
+          pos.z += Math.sin(angle) * speed;
+        }
+        if (teclas['KeyD']) {
+          pos.x += Math.cos(angle) * speed;
+          pos.z -= Math.sin(angle) * speed;
         }
 
-        // --- COLISIONES CON EDIFICIOS ---
-        edificios.forEach(box => {
-          let b = box.object3D.position;
-          let w = box.getAttribute('width') / 2 + 0.7;
-          let d = box.getAttribute('depth') / 2 + 0.7;
-          if (Math.abs(rPos.x - b.x) < w && Math.abs(rPos.z - b.z) < d) {
-            rPos.x = posPrevia.x;
-            rPos.z = posPrevia.z;
+        // --- SALTO ---
+        if (teclas['Space'] && enSuelo) {
+          velY = 0.3;
+          enSuelo = false;
+        }
+        if (!enSuelo) {
+          pos.y += velY;
+          velY -= 0.015;
+          if (pos.y <= 0) {
+            pos.y = 0;
+            enSuelo = true;
+          }
+        } else {
+          pos.y = 0; // ANCLAJE TOTAL AL SUELO
+        }
+
+        // --- COLISIONES REALES (BOX) ---
+        muros.forEach(m => {
+          let mP = m.object3D.position;
+          let w = m.getAttribute('width') / 2 + 0.8;
+          let d = m.getAttribute('depth') / 2 + 0.8;
+          if (Math.abs(pos.x - mP.x) < w && Math.abs(pos.z - mP.z) < d) {
+            pos.x = antX;
+            pos.z = antZ;
           }
         });
 
-        // --- COLISIONES CON POSTES ---
-        postes.forEach(post => {
-          let fp = post.object3D.position;
-          let dist = Math.sqrt(Math.pow(rPos.x - fp.x, 2) + Math.pow(rPos.z - fp.z, 2));
-          if (dist < 0.9) {
-            rPos.x = posPrevia.x;
-            rPos.z = posPrevia.z;
+        // --- COLISIONES POSTES ---
+        postes.forEach(p => {
+          let pP = p.object3D.position;
+          let dist = Math.sqrt(Math.pow(pos.x - pP.x, 2) + Math.pow(pos.z - pP.z, 2));
+          if (dist < 1) {
+            pos.x = antX;
+            pos.z = antZ;
           }
         });
 
-        // Guardar posición segura
-        posPrevia.x = rPos.x;
-        posPrevia.z = rPos.z;
+        // Aplicar posición al Rig
+        rig.setAttribute('position', `${pos.x} ${pos.y} ${pos.z}`);
 
-        // --- VILLANO PERSIGUIENDO (X ROJA) ---
-        let vPos = v.object3D.position;
-        vPos.x += (rPos.x - vPos.x) * 0.015;
-        vPos.z += (rPos.z - vPos.z) * 0.015;
-
-        // --- SISTEMA INFINITO ---
-        if (Math.abs(rPos.x) > 1000) rPos.x *= -0.95;
-        if (Math.abs(rPos.z) > 1000) rPos.z *= -0.95;
+        // --- IA VILLANO (FRANCHIS BRI) ---
+        let vPos = villano.object3D.position;
+        vPos.x += (pos.x - vPos.x) * 0.02;
+        vPos.z += (pos.z - vPos.z) * 0.02;
 
         // --- RESCATE ---
         ninas.forEach(n => {
           if (n.getAttribute('visible') !== false) {
-            let dist = Math.sqrt(Math.pow(rPos.x - n.object3D.position.x, 2) + Math.pow(rPos.z - n.object3D.position.z, 2));
-            if (dist < 2.8) {
+            let d = Math.sqrt(Math.pow(pos.x - n.object3D.position.x, 2) + Math.pow(pos.z - n.object3D.position.z, 2));
+            if (d < 3) {
               n.setAttribute('visible', false);
               score++;
               document.querySelector('#contador').innerText = score;
-              if(score >= 5) alert("¡Misión cumplida en la noche limeña!");
+              if(score >= 5) alert("¡SHENRY VICTORIOSO!");
             }
           }
         });
