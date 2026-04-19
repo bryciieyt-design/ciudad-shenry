@@ -2,150 +2,51 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Shenry: Movimiento Seguro</title>
+    <title>Shenry: Movimiento Base</title>
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     <style>
       body { margin: 0; overflow: hidden; background: #000; }
       #instrucciones {
-        position: fixed; width: 100%; height: 100%;
-        background: rgba(0,0,0,0.9); color: white;
-        display: flex; justify-content: center; align-items: center;
-        z-index: 1000; font-family: sans-serif; text-align: center; cursor: pointer;
-      }
-      #hud {
-        position: fixed; top: 20px; left: 20px; color: #ff69b4;
-        font-family: monospace; font-size: 20px; z-index: 100;
-        background: rgba(0,0,0,0.6); padding: 10px; border: 1px solid #ff69b4;
+        position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        color: white; font-family: sans-serif; text-align: center;
+        background: rgba(0,0,0,0.8); padding: 20px; z-index: 100;
+        border: 2px solid #ff69b4; border-radius: 10px; pointer-events: none;
       }
     </style>
   </head>
   <body>
 
     <div id="instrucciones">
-      <div>
-        <h1 style="color: #ff69b4;">CIUDAD LIMEÑA</h1>
-        <p>Haz CLICK aquí para activar las teclas</p>
-        <p><b>W, A, S, D</b> para caminar | <b>Mouse</b> para mirar</p>
-      </div>
+      <h1>MODO DE PRUEBA</h1>
+      <p>1. Haz CLIC en cualquier parte de la pantalla</p>
+      <p>2. Usa <b>W, A, S, D</b> para moverte</p>
+      <p>3. Mueve el <b>MOUSE</b> para mirar</p>
     </div>
 
-    <div id="hud">RESCATES (Y): <span id="puntos">0</span>/5</div>
-
     <a-scene>
-      <a-sky color="#050505"></a-sky>
+      <a-sky color="#111"></a-sky>
 
-      <a-entity id="rig" position="0 0 5">
-        <a-entity id="cam" camera look-controls="pointerLockEnabled: true" position="0 1.6 0">
-            <a-light type="spot" intensity="2" distance="30" color="#fff" angle="40"></a-light>
-            <a-entity cursor position="0 0 -1" geometry="primitive: ring; radiusInner: 0.01; radiusOuter: 0.015" material="color: #ff69b4; shader: flat"></a-entity>
+      <a-entity id="rig" position="0 0 0">
+        <a-entity camera 
+                  look-controls 
+                  wasd-controls="acceleration: 100" 
+                  position="0 1.6 0">
+          <a-light type="point" intensity="1" distance="10" position="0 0 0"></a-light>
         </a-entity>
       </a-entity>
 
-      <a-plane position="0 0 0" rotation="-90 0 0" width="1000" height="1000" color="#111"></a-plane>
+      <a-grid width="100" height="100" static-body></a-grid>
       
-      <a-entity id="mundo">
-        <a-box class="obstaculo" position="-12 5 -20" width="10" height="10" depth="10" color="#1a1a1a"></a-box>
-        <a-box class="obstaculo" position="15 7 -35" width="8" height="14" depth="8" color="#222"></a-box>
-        
-        <a-entity class="farol" position="5 0 -8">
-            <a-cylinder color="#333" radius="0.2" height="4"></a-cylinder>
-            <a-sphere position="0 4 0" radius="0.3" color="#ffaa00" material="shader:flat"></a-sphere>
-            <a-light type="point" intensity="1.5" distance="15" color="#ffaa00" position="0 3.8 0"></a-light>
-        </a-entity>
-      </a-entity>
-
-      <a-text class="nena" value="Y" color="#ff69b4" position="5 1.2 -15" align="center" width="15"></a-text>
-      <a-text id="franchis" value="X" color="red" position="0 1.2 -30" align="center" width="20"></a-text>
+      <a-box position="0 0.5 -10" color="red"></a-box>
 
     </a-scene>
 
     <script>
-      let score = 0;
-      let activo = false;
-      let pos = { x: 0, z: 5 };
-      let teclas = {};
-
-      const rig = document.querySelector('#rig');
-      const cam = document.querySelector('#cam');
-      const villano = document.querySelector('#franchis');
-      const obstaculos = document.querySelectorAll('.obstaculo');
-      const nenas = document.querySelectorAll('.nena');
-
-      // CAPTURAR CLIC PARA ACTIVAR
-      document.addEventListener('click', () => {
-        if (!activo) {
-          cam.components['look-controls'].requestPointerLock();
-          document.querySelector('#instrucciones').style.display = 'none';
-          activo = true;
-          console.log("Motor encendido");
-        }
+      // Al hacer clic, ocultamos las instrucciones y bloqueamos el puntero
+      document.body.addEventListener('click', function () {
+        document.querySelector('#instrucciones').style.display = 'none';
       });
-
-      // REGISTRO DE TECLAS
-      window.addEventListener('keydown', (e) => { teclas[e.code] = true; });
-      window.addEventListener('keyup', (e) => { teclas[e.code] = false; });
-
-      function loop() {
-        if (activo) {
-          let antX = pos.x;
-          let antZ = pos.z;
-
-          // Obtener rotación de la cámara para movernos hacia donde miramos
-          let rotation = cam.getAttribute('rotation');
-          let rotY = rotation.y * Math.PI / 180;
-          let speed = 0.15; // Velocidad de caminata
-
-          if (teclas['KeyW']) {
-            pos.x -= Math.sin(rotY) * speed;
-            pos.z -= Math.cos(rotY) * speed;
-          }
-          if (teclas['KeyS']) {
-            pos.x += Math.sin(rotY) * speed;
-            pos.z += Math.cos(rotY) * speed;
-          }
-          if (teclas['KeyA']) {
-            pos.x -= Math.cos(rotY) * speed;
-            pos.z += Math.sin(rotY) * speed;
-          }
-          if (teclas['KeyD']) {
-            pos.x += Math.cos(rotY) * speed;
-            pos.z -= Math.sin(rotY) * speed;
-          }
-
-          // COLISIONES SIMPLES
-          obstaculos.forEach(obj => {
-            let op = obj.object3D.position;
-            let w = obj.getAttribute('width')/2 + 0.6;
-            let d = obj.getAttribute('depth')/2 + 0.6;
-            if (Math.abs(pos.x - op.x) < w && Math.abs(pos.z - op.z) < d) {
-              pos.x = antX;
-              pos.z = antZ;
-            }
-          });
-
-          // APLICAR MOVIMIENTO (Y fijo en 0)
-          rig.setAttribute('position', `${pos.x} 0 ${pos.z}`);
-
-          // FRANCHIS BRI PERSIGUE
-          let vP = villano.object3D.position;
-          vP.x += (pos.x - vP.x) * 0.015;
-          vP.z += (pos.z - vP.z) * 0.015;
-
-          // RECOGER NIÑAS
-          nenas.forEach(n => {
-            if (n.getAttribute('visible') !== false) {
-              let dist = Math.sqrt(Math.pow(pos.x - n.object3D.position.x, 2) + Math.pow(pos.z - n.object3D.position.z, 2));
-              if (dist < 2) {
-                n.setAttribute('visible', false);
-                score++;
-                document.querySelector('#puntos').innerText = score;
-              }
-            }
-          });
-        }
-        requestAnimationFrame(loop);
-      }
-      loop();
     </script>
+
   </body>
 </html>
