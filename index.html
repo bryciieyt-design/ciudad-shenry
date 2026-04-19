@@ -1,52 +1,68 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title>Shenry: Movimiento Base</title>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shenry: Proyecto Limpio V1</title>
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     <style>
-      body { margin: 0; overflow: hidden; background: #000; }
-      #instrucciones {
-        position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-        color: white; font-family: sans-serif; text-align: center;
-        background: rgba(0,0,0,0.8); padding: 20px; z-index: 100;
-        border: 2px solid #ff69b4; border-radius: 10px; pointer-events: none;
-      }
+        body { margin: 0; overflow: hidden; }
+        #overlay {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: sans-serif;
+            z-index: 10;
+            border: 2px solid #333;
+        }
     </style>
-  </head>
-  <body>
+</head>
+<body>
 
-    <div id="instrucciones">
-      <h1>MODO DE PRUEBA</h1>
-      <p>1. Haz CLIC en cualquier parte de la pantalla</p>
-      <p>2. Usa <b>W, A, S, D</b> para moverte</p>
-      <p>3. Mueve el <b>MOUSE</b> para mirar</p>
+    <div id="overlay">
+        <h2 style="margin:0">PROYECTO LIMPIO</h2>
+        <p>1. Haz <b>CLIC</b> en la pantalla para activar mouse.</p>
+        <p>2. Moverse: <b>W, A, S, D</b></p>
+        <p>3. Mirar: <b>MOUSE</b></p>
     </div>
 
-    <a-scene>
-      <a-sky color="#111"></a-sky>
+    <a-scene background="color: #87CEEB"> <a-entity light="type: ambient; intensity: 0.7"></a-entity>
+        <a-entity light="type: directional; intensity: 0.6; castShadow: true" position="-1 2 1"></a-entity>
 
-      <a-entity id="rig" position="0 0 0">
-        <a-entity camera 
-                  look-controls 
-                  wasd-controls="acceleration: 100" 
-                  position="0 1.6 0">
-          <a-light type="point" intensity="1" distance="10" position="0 0 0"></a-light>
+        <a-entity id="rig" position="0 0 0">
+            <a-entity camera 
+                      look-controls="pointerLockEnabled: true" 
+                      wasd-controls="acceleration: 100" 
+                      position="0 1.6 0">
+                <a-entity cursor="fuse: false"
+                          position="0 0 -1"
+                          geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
+                          material="color: black; shader: flat">
+                </a-entity>
+            </a-entity>
         </a-entity>
-      </a-entity>
 
-      <a-grid width="100" height="100" static-body></a-grid>
-      
-      <a-box position="0 0.5 -10" color="red"></a-box>
+        <a-plane position="0 0 0" 
+                 rotation="-90 0 0" 
+                 width="10000" 
+                 height="10000" 
+                 color="#7CFC00"> </a-plane>
+
+        <a-box position="-5 0.5 -10" color="#4CC3D9"></a-box>
+        <a-sphere position="0 1.25 -15" radius="1.25" color="#EF2D5E"></a-sphere>
+        <a-cylinder position="5 0.75 -10" radius="0.5" height="1.5" color="#FFC65D"></a-cylinder>
 
     </a-scene>
 
     <script>
-      // Al hacer clic, ocultamos las instrucciones y bloqueamos el puntero
-      document.body.addEventListener('click', function () {
-        document.querySelector('#instrucciones').style.display = 'none';
-      });
+        // Al hacer clic ocultamos el menú para enfocarnos en el juego
+        document.addEventListener('click', function () {
+            const overlay = document.querySelector('#overlay');
+            overlay.style.opacity = "0.3"; // Lo hacemos casi invisible al jugar
+        });
     </script>
-
-  </body>
+</body>
 </html>
