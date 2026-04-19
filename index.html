@@ -2,192 +2,166 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Shenry: The Fog of Lima V2</title>
+    <title>Shenry: Fog of Lima V3</title>
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
-    <script src="https://unpkg.com/aframe-environment-component@1.3.2/dist/aframe-environment-component.min.js"></script>
-    <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script>
     <style>
-        body { margin: 0; overflow: hidden; background: #000; font-family: 'Courier New', Courier, monospace; }
-        
-        /* PANTALLA DE INICIO */
+        body { margin: 0; overflow: hidden; background: #000; font-family: 'Courier New', monospace; }
         #pantalla-inicio {
-            position: fixed; width: 100%; height: 100%; background: #010101;
+            position: fixed; width: 100%; height: 100%; background: #050505;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 2000; color: #5a0000; text-align: center;
+            z-index: 2000; color: #7a0000; text-align: center;
         }
-        #pantalla-inicio h1 { font-size: 50px; letter-spacing: 12px; margin-bottom: 20px; text-shadow: 0 0 10px #7a0000; }
-        #nombre-input { 
-            padding: 12px; font-size: 22px; background: #111; border: 1px solid #5a0000; 
-            color: #ff69b4; margin-bottom: 20px; outline: none; text-align: center; width: 250px;
-        }
-        #btn-jugar { 
-            padding: 15px 50px; font-size: 20px; background: #5a0000; color: white; 
-            border: none; cursor: pointer; transition: 0.3s; letter-spacing: 2px;
-        }
-        #btn-jugar:hover { background: #aa0000; box-shadow: 0 0 25px #ff0000; }
-
-        /* HUD TRANSPARENTE */
+        #nombre-input { padding: 10px; font-size: 20px; background: #111; border: 1px solid #7a0000; color: #ff69b4; margin-bottom: 20px; text-align: center; }
+        #btn-jugar { padding: 15px 40px; background: #7a0000; color: white; border: none; cursor: pointer; font-weight: bold; }
         #hud {
-            position: fixed; top: 20px; left: 20px; width: 320px;
-            background: rgba(0, 0, 0, 0.45); padding: 25px; border-radius: 5px;
-            color: #ccc; z-index: 100; pointer-events: none; border: 1px solid rgba(255,105,180,0.2);
+            position: fixed; top: 20px; left: 20px; width: 280px;
+            background: rgba(0, 0, 0, 0.4); padding: 15px; border-radius: 5px;
+            color: #ddd; z-index: 100; pointer-events: none; border-left: 3px solid #7a0000;
         }
-        .proyecto-titulo { font-size: 15px; color: #ff69b4; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px;}
-        .objetivo { margin: 12px 0; font-size: 17px; transition: 0.5s; display: flex; align-items: center;}
-        .icono-obj { width: 10px; height: 10px; border-radius: 50%; background: #5a0000; margin-right: 10px; display: inline-block;}
-        .completado { text-decoration: line-through; color: #5a0000; opacity: 0.5; }
-        .completado .icono-obj { background: #333; }
+        .proyecto-titulo { font-size: 14px; color: #ff69b4; margin-bottom: 8px; }
+        .objetivo { margin: 5px 0; font-size: 14px; }
+        #status-linterna { color: #ffaa00; font-size: 12px; margin-top: 5px; }
     </style>
 </head>
 <body>
 
     <div id="pantalla-inicio">
         <h1>SHENRY CORE</h1>
+        <p style="color: #666;">Controles: WASD + Mouse + P (Linterna)</p>
         <input type="text" id="nombre-input" value="Shenry" maxlength="15">
-        <button id="btn-jugar">INICIAR</button>
+        <button id="btn-jugar">INICIAR PROTOCOLO</button>
     </div>
 
     <div id="hud">
         <div class="proyecto-titulo" id="display-nombre">PROYECTO: SHENRY</div>
-        <div id="obj1" class="objetivo"><span class="icono-obj"></span>RESCATAR NIÑAS (<span id="count">0</span>/15)</div>
-        <div id="obj2" class="objetivo"><span class="icono-obj"></span>ELIMINAR A FRANCHIS BRI</div>
-        <div id="obj3" class="objetivo"><span class="icono-obj"></span>ESCAPAR</div>
+        <div class="objetivo">● RESCATAR NIÑAS (0/15)</div>
+        <div class="objetivo">● ELIMINAR A FRANCHIS BRI</div>
+        <div class="objetivo">● ESCAPAR</div>
+        <div id="status-linterna">LINTERNA: ENCENDIDA (P)</div>
     </div>
 
-    <a-scene fog="type: exponential; color: #010101; density: 0.07" shadow="type: pcfbasic">
-        
+    <a-scene fog="type: exponential; color: #010101; density: 0.1">
         <a-sky color="#010101"></a-sky>
-        <a-subsky radius="4000" material="fog: false; clouds: 0; lighting: none; sun: 0; skyType: atmosphere; atmosphere: {sunPosition: {x: 0, y: -1, z: 0}, atmosphere: {skyColor: {r: 0.01, g: 0.01, b: 0.02}}, groundColor: {r: 0, g: 0, b: 0}}"></a-subsky>
-        <a-entity position="0 200 -1000">
-            <a-ring color="#333" radius-inner="30" radius-outer="35" position="0 0 0" rotation="0 0 20" material="shader: flat; fog: false"></a-ring>
-            <a-circle color="#010101" radius="33" position="8 0 1" material="shader: flat; fog: false"></a-circle>
-        </a-entity>
 
-        <a-entity id="rig" position="0 0 10">
-            <a-entity id="legs" position="0 0.2 0" visible="false">
-                <a-cylinder id="leg-l" color="#111" radius="0.1" height="0.6" position="-0.25 0 0"></a-cylinder>
-                <a-cylinder id="leg-r" color="#111" radius="0.1" height="0.6" position="0.25 0 0"></a-cylinder>
-            </a-entity>
-
-            <a-entity id="camera" camera look-controls="pointerLockEnabled: true" position="0 1.6 0">
-                <a-light type="spot" intensity="2" distance="30" angle="40" color="#fff" castShadow="true"></a-light>
-                <a-entity cursor="fuse: false" position="0 0 -1" 
-                          geometry="primitive: ring; radiusInner: 0.01; radiusOuter: 0.015" 
-                          material="color: #7a0000; shader: flat; fog: false"></a-entity>
-            </a-entity>
-        </a-entity>
-
-        <a-entity id="forest-biome">
-            <a-entity environment="preset: forest; ground: noise; groundTexture: walk; groundColor: #0a1a05; groundColor2: #050a02; dressing: trees; dressingAmount: 500; dressingColor: #050a02; dressingScale: 0.1; dressingVariance: {x: 0.2, y: 1, z: 0.2}; fog: 0; active: true"></a-entity>
+        <a-entity id="rig" position="0 0 5">
             
-            <a-entity environment=" dressing: rocks; dressingAmount: 200; dressingScale: 0.05; dressingColor: #222; active: true"></a-entity>
-        </a-entity>
+            <a-entity id="body-parts">
+                <a-entity id="paticas">
+                    <a-box id="leg-l" color="#0a0a0a" width="0.05" height="0.6" depth="0.05" position="-0.2 0.3 0"></a-box>
+                    <a-box id="leg-r" color="#0a0a0a" width="0.05" height="0.6" depth="0.05" position="0.2 0.3 0"></a-box>
+                </a-entity>
+                
+                <a-entity id="brazos" position="0 1.2 0">
+                    <a-box id="arm-l" color="#0a0a0a" width="0.05" height="0.5" depth="0.05" position="-0.4 0 -0.2" rotation="-20 0 0"></a-box>
+                    <a-box id="arm-r" color="#0a0a0a" width="0.05" height="0.5" depth="0.05" position="0.4 0 -0.3" rotation="-80 0 0">
+                        <a-cylinder color="#222" radius="0.04" height="0.2" position="0 0.25 0" rotation="90 0 0">
+                            <a-entity id="light-source" light="type: spot; intensity: 2; distance: 25; angle: 40; penumbra: 0.5" position="0 0.1 0" rotation="-90 0 0"></a-entity>
+                            <a-sphere color="#ffffaa" radius="0.03" position="0 0.1 0" material="shader: flat"></a-sphere>
+                        </a-cylinder>
+                    </a-box>
+                </a-entity>
+            </a-entity>
 
-        <a-entity id="city-biome" position="0 0 -200">
-            <a-plane id="piso-ciudad" position="0 -0.1 0" rotation="-90 0 0" width="300" height="300" color="#111" material="roughness: 1"></a-plane>
-            <a-box class="solido" position="-25 15 -30" width="18" height="32" depth="18" color="#101010" shadow="receive: true"></a-box>
-            <a-box class="solido" position="30 22 -60" width="25" height="45" depth="25" color="#050505" shadow="receive: true"></a-box>
-            <a-entity class="poste" position="15 0 -15">
-                <a-cylinder color="#222" radius="0.25" height="6"></a-cylinder>
-                <a-sphere position="0 6 0" radius="0.4" color="#ffaa00" material="shader:flat; fog: false"></a-sphere>
-                <a-light type="point" intensity="1.5" distance="18" color="#ffaa00" position="0 5.5 0"></a-light>
+            <a-entity id="camera" camera look-controls="pointerLockEnabled: true" wasd-controls="acceleration: 100" position="0 1.6 0">
+                <a-entity cursor position="0 0 -1" geometry="primitive: ring; radiusInner: 0.005; radiusOuter: 0.01" material="color: #7a0000; shader: flat"></a-entity>
             </a-entity>
         </a-entity>
 
-        <a-entity id="villano" position="0 2.5 -40" look-at="#camera">
-            <a-text value="F" color="#7a0000" align="center" width="22" material="shader: flat; fog: false"></a-text>
+        <a-plane position="0 0 0" rotation="-90 0 0" width="1000" height="1000" color="#0a1a05"></a-plane>
+        
+        <a-entity position="0 0 -50">
+            <a-box class="edificio" position="-15 10 -10" width="10" height="20" depth="10" color="#111"></a-box>
+            <a-box class="barrera" position="-15 2 -10" width="11" height="5" depth="11" material="visible: false"></a-box>
+
+            <a-box class="edificio" position="15 10 -30" width="12" height="25" depth="12" color="#0a0a0a"></a-box>
+            <a-box class="barrera" position="15 2 -30" width="13" height="5" depth="13" material="visible: false"></a-box>
+            
+            <a-entity position="0 0 -5">
+                <a-cylinder color="#222" radius="0.1" height="4"></a-cylinder>
+                <a-sphere position="0 4 0" radius="0.2" color="#ffaa00" material="shader: flat"></a-sphere>
+                <a-light type="point" intensity="0.8" distance="10" color="#ffaa00"></a-light>
+                <a-cylinder class="barrera" radius="0.5" height="4" material="visible: false"></a-cylinder>
+            </a-entity>
         </a-entity>
+
+        <a-text id="villano" value="F" color="#7a0000" position="0 2 -15" align="center" width="20"></a-text>
 
     </a-scene>
 
     <script>
         let activo = false;
-        let pos = { x: 0, y: 0, z: 10 };
-        let velY = 0;
-        let saltando = false;
-        let teclas = {};
-        let nombreJugador = "Shenry";
+        let linternaEncendida = true;
+        let walkCycle = 0;
 
         const btnJugar = document.getElementById('btn-jugar');
-        const inputNombre = document.getElementById('nombre-input');
-        const pantallaInicio = document.getElementById('pantalla-inicio');
-        const displayNombre = document.getElementById('display-nombre');
         const rig = document.getElementById('rig');
-        const legs = document.getElementById('legs');
         const cam = document.getElementById('camera');
+        const luz = document.getElementById('light-source');
         const villano = document.getElementById('villano');
-        const solidos = document.querySelectorAll('.solido, .poste');
+        const barreras = document.querySelectorAll('.barrera');
+        const legs = [document.getElementById('leg-l'), document.getElementById('leg-r')];
+        const arms = [document.getElementById('arm-l'), document.getElementById('arm-r')];
 
         btnJugar.addEventListener('click', () => {
-            nombreJugador = inputNombre.value.toUpperCase();
-            displayNombre.innerText = `PROYECTO: ${nombreJugador}`;
-            pantallaInicio.style.display = 'none';
+            const nombre = document.getElementById('nombre-input').value.toUpperCase();
+            document.getElementById('display-nombre').innerText = `PROYECTO: ${nombre}`;
+            document.getElementById('pantalla-inicio').style.display = 'none';
             cam.components['look-controls'].requestPointerLock();
             activo = true;
         });
 
-        window.onkeydown = (e) => teclas[e.code] = true;
-        window.onkeyup = (e) => teclas[e.code] = false;
+        // Control de Linterna con tecla P
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'KeyP' && activo) {
+                linternaEncendida = !linternaEncendida;
+                luz.setAttribute('light', 'intensity', linternaEncendida ? 2 : 0);
+                document.getElementById('status-linterna').innerText = `LINTERNA: ${linternaEncendida ? 'ENCENDIDA' : 'APAGADA'} (P)`;
+            }
+        });
 
-        function update() {
+        function loop() {
             if (activo) {
-                let antX = pos.x;
-                let antZ = pos.z;
-                
-                let rotation = cam.getAttribute('rotation');
-                let rotY = rotation.y * Math.PI / 180;
-                let speed = 0.15;
+                let p = rig.getAttribute('position');
+                let rotY = cam.getAttribute('rotation').y;
 
-                // MOVIMIENTO WASD
-                if (teclas['KeyW']) { pos.x -= Math.sin(rotY) * speed; pos.z -= Math.cos(rotY) * speed; }
-                if (teclas['KeyS']) { pos.x += Math.sin(rotY) * speed; pos.z += Math.cos(rotY) * speed; }
-                if (teclas['KeyA']) { pos.x -= Math.cos(rotY) * speed; pos.z += Math.sin(rotY) * speed; }
-                if (teclas['KeyD']) { pos.x += Math.cos(rotY) * speed; pos.z -= Math.sin(rotY) * speed; }
-
-                // SALTO
-                if (teclas['Space'] && !saltando) { velY = 0.28; saltando = true; }
-                if (saltando) {
-                    pos.y += velY;
-                    velY -= 0.012;
-                    if (pos.y <= 0) { pos.y = 0; saltando = false; }
-                }
-
-                // SISTEMA VISUAL DE PIERNAS (Paticas)
-                // Se activan solo al mirar hacia abajo (rotación X > 40)
-                if (rotation.x < -40) {
-                    legs.setAttribute('visible', 'true');
-                } else {
-                    legs.setAttribute('visible', 'false');
-                }
-
-                // COLISIONES FÍSICAS (CIUDAD y Biomas)
-                // Bloqueo simple: no salir de la zona de juego
-                if (pos.z > 80 || pos.z < -450 || pos.x > 80 || pos.x < -80) {
-                    pos.x = antX;
-                    pos.z = antZ;
-                }
-                // Colisión con edificios
-                solidos.forEach(obj => {
-                    let p = obj.object3D.position;
-                    let distZ = Math.abs(pos.z - (p.z - 200));
-                    let distX = Math.abs(pos.x - p.x);
-                    if (distX < 6 && distZ < 6) { 
-                        pos.x = antX;
-                        pos.z = antZ;
+                // 1. COLISIONES POR BARRERAS INVISIBLES
+                barreras.forEach(b => {
+                    let bp = b.object3D.position;
+                    let bw = b.getAttribute('width') / 2 || b.getAttribute('radius');
+                    let bd = b.getAttribute('depth') / 2 || b.getAttribute('radius');
+                    
+                    // Ajustar posición si entra en el área de la barrera
+                    if (Math.abs(p.x - bp.x) < bw + 0.5 && Math.abs(p.z - (bp.z - 50)) < bd + 0.5) {
+                        // Empujoncito hacia afuera
+                        p.x += (p.x > bp.x) ? 0.1 : -0.1;
+                        p.z += (p.z > (bp.z - 50)) ? 0.1 : -0.1;
+                        rig.setAttribute('position', p);
                     }
                 });
 
-                // APLICAR POSICIÓN
-                rig.setAttribute('position', `${pos.x} ${pos.y} ${pos.z}`);
+                // 2. ANIMACIÓN DE CAMINATA (Paticas y Brazos)
+                // Solo si se presionan las teclas WASD
+                walkCycle += 0.15;
+                let wave = Math.sin(walkCycle) * 0.2;
+                
+                legs[0].setAttribute('position', {x: -0.2, y: 0.3 + wave, z: 0});
+                legs[1].setAttribute('position', {x: 0.2, y: 0.3 - wave, z: 0});
+                
+                // Los brazos se mueven sutilmente
+                arms[0].setAttribute('rotation', {x: -20 + (wave*20), y: 0, z: 0});
+                arms[1].setAttribute('rotation', {x: -80 + (wave*10), y: 0, z: 0});
 
-                // IA FRANCHIS BRI (F): Seguimiento lento Slenderman
-                let vP = villano.object3D.position;
-                vP.x += (pos.x - vP.x) * 0.009;
-                vP.z += (pos.z - vP.z) * 0.009;
+                // 3. SEGUIMIENTO DEL VILLANO
+                let vp = villano.getAttribute('position');
+                villano.setAttribute('position', {
+                    x: vp.x + (p.x - vp.x) * 0.008,
+                    y: 2,
+                    z: vp.z + (p.z - vp.z) * 0.008
+                });
             }
-            requestAnimationFrame(update);
+            requestAnimationFrame(loop);
         }
-        update();
+        loop();
     </script>
 </body>
 </html>
