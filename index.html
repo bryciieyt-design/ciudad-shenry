@@ -2,10 +2,10 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Shenry: Caminata Infinita</title>
+    <title>Shenry: Movimiento Seguro</title>
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     <style>
-      body { margin: 0; overflow: hidden; background: #0a0805; }
+      body { margin: 0; overflow: hidden; background: #000; }
       #instrucciones {
         position: fixed; width: 100%; height: 100%;
         background: rgba(0,0,0,0.9); color: white;
@@ -15,7 +15,7 @@
       #hud {
         position: fixed; top: 20px; left: 20px; color: #ff69b4;
         font-family: monospace; font-size: 20px; z-index: 100;
-        background: rgba(0,0,0,0.5); padding: 10px;
+        background: rgba(0,0,0,0.6); padding: 10px; border: 1px solid #ff69b4;
       }
     </style>
   </head>
@@ -23,114 +23,119 @@
 
     <div id="instrucciones">
       <div>
-        <h1>CIUDAD LIMEÑA: CAMINATA DE PAZ</h1>
-        <p>Haz CLICK para entrar</p>
-        <p>W, A, S, D para caminar | MOUSE para mirar</p>
-        <p style="color: #00ff00;">Suelo 100% Sólido - Imposible caer</p>
+        <h1 style="color: #ff69b4;">CIUDAD LIMEÑA</h1>
+        <p>Haz CLICK aquí para activar las teclas</p>
+        <p><b>W, A, S, D</b> para caminar | <b>Mouse</b> para mirar</p>
       </div>
     </div>
 
-    <div id="hud">NIÑAS RESCATADAS: <span id="puntos">0</span>/5</div>
+    <div id="hud">RESCATES (Y): <span id="puntos">0</span>/5</div>
 
     <a-scene>
-      <a-sky color="#0a0805"></a-sky>
+      <a-sky color="#050505"></a-sky>
 
-      <a-entity id="cuerpo" position="0 0 5">
-        <a-entity id="camara" camera look-controls="pointerLockEnabled: true" position="0 1.6 0">
+      <a-entity id="rig" position="0 0 5">
+        <a-entity id="cam" camera look-controls="pointerLockEnabled: true" position="0 1.6 0">
             <a-light type="spot" intensity="2" distance="30" color="#fff" angle="40"></a-light>
+            <a-entity cursor position="0 0 -1" geometry="primitive: ring; radiusInner: 0.01; radiusOuter: 0.015" material="color: #ff69b4; shader: flat"></a-entity>
         </a-entity>
       </a-entity>
 
-      <a-plane position="0 0 0" rotation="-90 0 0" width="10000" height="10000" color="#0f0f0f"></a-plane>
+      <a-plane position="0 0 0" rotation="-90 0 0" width="1000" height="1000" color="#111"></a-plane>
       
-      <a-entity id="ciudad">
-        <a-box class="obstaculo" position="-10 5 -15" width="8" height="10" depth="8" color="#1a1a1a"></a-box>
-        <a-box class="obstaculo" position="20 7 -30" width="10" height="14" depth="10" color="#222"></a-box>
-        <a-box class="obstaculo" position="-25 4 20" width="12" height="8" depth="12" color="#111"></a-box>
+      <a-entity id="mundo">
+        <a-box class="obstaculo" position="-12 5 -20" width="10" height="10" depth="10" color="#1a1a1a"></a-box>
+        <a-box class="obstaculo" position="15 7 -35" width="8" height="14" depth="8" color="#222"></a-box>
         
-        <a-entity class="farol" position="5 0 -5">
-            <a-cylinder color="#333" radius="0.15" height="4"></a-cylinder>
+        <a-entity class="farol" position="5 0 -8">
+            <a-cylinder color="#333" radius="0.2" height="4"></a-cylinder>
             <a-sphere position="0 4 0" radius="0.3" color="#ffaa00" material="shader:flat"></a-sphere>
             <a-light type="point" intensity="1.5" distance="15" color="#ffaa00" position="0 3.8 0"></a-light>
         </a-entity>
       </a-entity>
 
-      <a-text class="nena" value="Y" color="#ff69b4" position="5 1.2 -10" align="center" width="15"></a-text>
-      <a-text class="nena" value="Y" color="#ff69b4" position="-15 1.2 -20" align="center" width="15"></a-text>
-      <a-text class="nena" value="Y" color="#ff69b4" position="15 1.2 15" align="center" width="15"></a-text>
-
-      <a-text id="franchis" value="X" color="red" position="10 1.2 -25" align="center" width="20"></a-text>
+      <a-text class="nena" value="Y" color="#ff69b4" position="5 1.2 -15" align="center" width="15"></a-text>
+      <a-text id="franchis" value="X" color="red" position="0 1.2 -30" align="center" width="20"></a-text>
 
     </a-scene>
 
     <script>
       let score = 0;
       let activo = false;
-      let miPos = { x: 0, z: 5 };
+      let pos = { x: 0, z: 5 };
       let teclas = {};
 
-      const cuerpo = document.querySelector('#cuerpo');
-      const camara = document.querySelector('#camara');
+      const rig = document.querySelector('#rig');
+      const cam = document.querySelector('#cam');
       const villano = document.querySelector('#franchis');
-      const nenas = document.querySelectorAll('.nena');
       const obstaculos = document.querySelectorAll('.obstaculo');
-      const faroles = document.querySelectorAll('.farol');
+      const nenas = document.querySelectorAll('.nena');
 
-      document.body.addEventListener('click', () => {
-        camara.components['look-controls'].requestPointerLock();
-        document.querySelector('#instrucciones').style.display = 'none';
-        activo = true;
+      // CAPTURAR CLIC PARA ACTIVAR
+      document.addEventListener('click', () => {
+        if (!activo) {
+          cam.components['look-controls'].requestPointerLock();
+          document.querySelector('#instrucciones').style.display = 'none';
+          activo = true;
+          console.log("Motor encendido");
+        }
       });
 
-      window.onkeydown = (e) => teclas[e.code] = true;
-      window.onkeyup = (e) => teclas[e.code] = false;
+      // REGISTRO DE TECLAS
+      window.addEventListener('keydown', (e) => { teclas[e.code] = true; });
+      window.addEventListener('keyup', (e) => { teclas[e.code] = false; });
 
-      function frame() {
+      function loop() {
         if (activo) {
-          let antX = miPos.x;
-          let antZ = miPos.z;
+          let antX = pos.x;
+          let antZ = pos.z;
 
-          // Movimiento basado en la mirada
-          let rot = camara.getAttribute('rotation').y * Math.PI / 180;
-          let speed = 0.12;
+          // Obtener rotación de la cámara para movernos hacia donde miramos
+          let rotation = cam.getAttribute('rotation');
+          let rotY = rotation.y * Math.PI / 180;
+          let speed = 0.15; // Velocidad de caminata
 
-          if (teclas['KeyW']) { miPos.x -= Math.sin(rot) * speed; miPos.z -= Math.cos(rot) * speed; }
-          if (teclas['KeyS']) { miPos.x += Math.sin(rot) * speed; miPos.z += Math.cos(rot) * speed; }
-          if (teclas['KeyA']) { miPos.x -= Math.cos(rot) * speed; miPos.z += Math.sin(rot) * speed; }
-          if (teclas['KeyD']) { miPos.x += Math.cos(rot) * speed; miPos.z -= Math.sin(rot) * speed; }
+          if (teclas['KeyW']) {
+            pos.x -= Math.sin(rotY) * speed;
+            pos.z -= Math.cos(rotY) * speed;
+          }
+          if (teclas['KeyS']) {
+            pos.x += Math.sin(rotY) * speed;
+            pos.z += Math.cos(rotY) * speed;
+          }
+          if (teclas['KeyA']) {
+            pos.x -= Math.cos(rotY) * speed;
+            pos.z += Math.sin(rotY) * speed;
+          }
+          if (teclas['KeyD']) {
+            pos.x += Math.cos(rotY) * speed;
+            pos.z -= Math.sin(rotY) * speed;
+          }
 
-          // --- COLISIONES ---
-          let choca = false;
-          // Edificios
+          // COLISIONES SIMPLES
           obstaculos.forEach(obj => {
-            let p = obj.object3D.position;
-            let w = obj.getAttribute('width')/2 + 0.5;
-            let d = obj.getAttribute('depth')/2 + 0.5;
-            if (Math.abs(miPos.x - p.x) < w && Math.abs(miPos.z - p.z) < d) choca = true;
-          });
-          // Faroles
-          faroles.forEach(obj => {
-            let p = obj.object3D.position;
-            let dist = Math.sqrt(Math.pow(miPos.x - p.x, 2) + Math.pow(miPos.z - p.z, 2));
-            if (dist < 0.7) choca = true;
+            let op = obj.object3D.position;
+            let w = obj.getAttribute('width')/2 + 0.6;
+            let d = obj.getAttribute('depth')/2 + 0.6;
+            if (Math.abs(pos.x - op.x) < w && Math.abs(pos.z - op.z) < d) {
+              pos.x = antX;
+              pos.z = antZ;
+            }
           });
 
-          if (choca) { miPos.x = antX; miPos.z = antZ; }
+          // APLICAR MOVIMIENTO (Y fijo en 0)
+          rig.setAttribute('position', `${pos.x} 0 ${pos.z}`);
 
-          // Aplicar posición (Y es SIEMPRE 0)
-          cuerpo.setAttribute('position', `${miPos.x} 0 ${miPos.z}`);
-
-          // --- VILLANO SIGUE ---
+          // FRANCHIS BRI PERSIGUE
           let vP = villano.object3D.position;
-          vP.x += (miPos.x - vP.x) * 0.01;
-          vP.z += (miPos.z - vP.z) * 0.01;
-          villano.setAttribute('look-at', '#cuerpo');
+          vP.x += (pos.x - vP.x) * 0.015;
+          vP.z += (pos.z - vP.z) * 0.015;
 
-          // --- RECOGER ---
+          // RECOGER NIÑAS
           nenas.forEach(n => {
             if (n.getAttribute('visible') !== false) {
-              let d = Math.sqrt(Math.pow(miPos.x - n.object3D.position.x, 2) + Math.pow(miPos.z - n.object3D.position.z, 2));
-              if (d < 2) {
+              let dist = Math.sqrt(Math.pow(pos.x - n.object3D.position.x, 2) + Math.pow(pos.z - n.object3D.position.z, 2));
+              if (dist < 2) {
                 n.setAttribute('visible', false);
                 score++;
                 document.querySelector('#puntos').innerText = score;
@@ -138,9 +143,9 @@
             }
           });
         }
-        requestAnimationFrame(frame);
+        requestAnimationFrame(loop);
       }
-      frame();
+      loop();
     </script>
   </body>
 </html>
