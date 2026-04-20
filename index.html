@@ -2,79 +2,74 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, orientation=landscape">
-    <title>JICAMARCA: SOBREVIVENCIA MÓVIL</title>
+    <title>JICAMARCA: SOBREVIVIR O MORIR</title>
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     <style>
-        body { margin: 0; overflow: hidden; background: #000; font-family: 'Courier New', monospace; touch-action: none; user-select: none; }
-        .pantalla { position: fixed; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2000; text-align: center; color: #00ffff; background: #000; }
+        body { margin: 0; overflow: hidden; background: #000; font-family: 'Courier New', monospace; }
+        .pantalla { position: fixed; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2000; text-align: center; color: #00ffff; }
+        #pantalla-inicio { background: radial-gradient(circle, #001a1a 0%, #000 100%); }
+        #pantalla-muerte { background: #1a0000; display: none; color: #ff0000; }
+        #pantalla-victoria { background: #001a00; display: none; color: #00ff00; }
+        #pantalla-pausa { background: rgba(0,0,0,0.9); display: none; color: #fff; border: 4px double #00ffff; }
         
-        /* Botones de plataforma */
-        .btn-dispositivo { padding: 15px 30px; font-size: 20px; margin: 10px; border: 2px solid #00ffff; background: transparent; color: #00ffff; cursor: pointer; width: 200px; }
+        select, input { background: #000; border: 2px solid #00ffff; color: #fff; text-align: center; font-size: 18px; outline: none; margin: 10px; padding: 5px; }
+        button { padding: 15px 45px; background: #000; color: #00ffff; border: 2px solid #00ffff; cursor: pointer; font-weight: bold; margin-top: 25px; transition: 0.4s; letter-spacing: 5px; text-transform: uppercase; }
+        button:hover { background: #00ffff; color: #000; box-shadow: 0 0 30px #00ffff; }
 
-        /* HUD */
-        #hud { position: fixed; top: 10px; left: 10px; color: #fff; z-index: 100; display: none; background: rgba(0,20,20,0.8); padding: 10px; border-left: 3px solid #00ffff; pointer-events: none; }
-        #barra-vida-cont { width: 120px; height: 10px; background: #333; border: 1px solid #00ffff; margin-top: 5px; }
-        #barra-vida-fill { width: 100%; height: 100%; background: #00ffff; }
-
-        /* JOYSTICK MANUAL */
-        #joystick-container { position: fixed; bottom: 30px; left: 40px; width: 120px; height: 120px; background: rgba(255,255,255,0.1); border-radius: 50%; display: none; z-index: 1500; touch-action: none; border: 2px solid rgba(0,255,255,0.3); }
-        #joystick-knob { position: absolute; width: 50px; height: 50px; background: #00ffff; border-radius: 50%; top: 35px; left: 35px; opacity: 0.7; box-shadow: 0 0 15px #00ffff; }
-
-        /* BOTONES ACCIÓN MOBILE */
-        #controles-mobile { position: fixed; width: 100%; height: 100%; top: 0; left: 0; pointer-events: none; z-index: 1500; display: none; }
-        .btn-m { position: absolute; pointer-events: auto; background: rgba(0,255,255,0.15); border: 2px solid #00ffff; color: #fff; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 12px; }
-        #btn-jump { bottom: 30px; right: 40px; width: 80px; height: 80px; border-radius: 50%; }
-        #btn-light { bottom: 30px; right: 140px; width: 60px; height: 60px; border-radius: 50%; }
-        #btn-pause-mob { top: 15px; right: 15px; width: 80px; height: 35px; border-radius: 5px; }
+        #hud { position: fixed; top: 25px; left: 25px; color: #fff; z-index: 100; display: none; background: linear-gradient(135deg, rgba(0,20,20,0.9) 0%, rgba(0,0,0,0.7) 100%); padding: 20px; border-left: 5px solid #00ffff; min-width: 260px; }
+        #barra-vida-cont { width: 100%; height: 18px; background: rgba(255,255,255,0.1); margin-top: 10px; border: 1px solid rgba(0,255,255,0.5); overflow: hidden; }
+        #barra-vida-fill { width: 100%; height: 100%; background: #00ffff; box-shadow: 0 0 15px #00ffff; transition: width 0.4s; }
+        .controles-hint { font-size: 10px; color: #00ffff; margin-top: 10px; opacity: 0.6; }
     </style>
 </head>
 <body>
 
-    <div id="menu-dispositivo" class="pantalla">
-        <h1 style="font-size: 24px;">JICAMARCA MONSTER</h1>
-        <p>Selecciona cómo vas a jugar:</p>
-        <button class="btn-dispositivo" onclick="elegirModo('pc')">TECLADO (PC)</button>
-        <button class="btn-dispositivo" onclick="elegirModo('mobile')">TÁCTIL (MÓVIL)</button>
+    <div id="pantalla-inicio" class="pantalla">
+        <h1 style="font-size: 45px; text-shadow: 0 0 20px #00ffff;">JICAMARCA MONSTER</h1>
+        <label>OPERATIVO:</label>
+        <input type="text" id="nombre-input" value="Shenry">
+        <label>DIFICULTAD:</label>
+        <select id="dificultad-select">
+            <option value="10">Área E (Fácil)</option>
+            <option value="25" selected>Área D (Normal)</option>
+            <option value="50">Área C (Difícil)</option>
+        </select>
+        <label>OBJETIVOS Y:</label>
+        <input type="number" id="cantidad-input" value="12">
+        <button id="btn-jugar">INICIAR</button>
     </div>
 
-    <div id="pantalla-inicio" class="pantalla" style="display:none;">
-        <h2>CONFIGURACIÓN</h2>
-        <input type="text" id="nombre-input" value="Shenry" style="padding:10px; margin-bottom:10px;">
-        <select id="dificultad-select" style="padding:10px;">
-            <option value="15">FÁCIL</option>
-            <option value="30" selected>NORMAL</option>
-            <option value="60">EXTREMO</option>
-        </select>
-        <button class="btn-dispositivo" id="btn-jugar" style="background:#00ffff; color:#000;">ENTRAR AL CERRO</button>
+    <div id="pantalla-pausa" class="pantalla">
+        <h1>PAUSA</h1>
+        <button id="btn-continuar">REANUDAR</button>
+    </div>
+
+    <div id="pantalla-muerte" class="pantalla">
+        <h1 style="color: #ff0000;">FIN DEL OPERATIVO</h1>
+        <button onclick="location.reload()">REINTENTAR</button>
+    </div>
+
+    <div id="pantalla-victoria" class="pantalla">
+        <h1 style="color: #00ff00;">ZONA ASEGURADA</h1>
+        <button onclick="location.reload()">MENU</button>
     </div>
 
     <div id="hud">
-        <div id="p-nombre">SHENRY</div>
+        <div id="p-nombre">-</div>
+        <div style="font-size: 14px;">RESCATES: <span id="count" style="color: #ff69b4;">0</span> / <span id="total">0</span></div>
         <div id="barra-vida-cont"><div id="barra-vida-fill"></div></div>
-        <div style="font-size: 12px;">OBJETIVOS: <span id="count">0</span>/12</div>
+        <div style="font-size: 12px; margin-top: 5px;">INTEGRIDAD: <span id="hp-text">100</span>%</div>
+        <div class="controles-hint">[P] LINTERNA (SIGILO) | [ESPACIO] SALTAR</div>
     </div>
 
-    <div id="joystick-container"><div id="joystick-knob"></div></div>
-    <div id="controles-mobile">
-        <div id="btn-jump" class="btn-m">SALTO</div>
-        <div id="btn-light" class="btn-m">LUZ</div>
-        <div id="btn-pause-mob" class="btn-m">PAUSA</div>
-    </div>
-
-    <div id="pantalla-pausa" class="pantalla" style="display:none; background:rgba(0,0,0,0.8);">
-        <h1>PAUSA</h1>
-        <button class="btn-dispositivo" id="btn-continuar">CONTINUAR</button>
-    </div>
-    <div id="pantalla-muerte" class="pantalla" style="display:none;"><h1>HAS PERECIDO</h1><button class="btn-dispositivo" onclick="location.reload()">REINTENTAR</button></div>
-
-    <a-scene id="escena" fog="type: exponential; color: #000808; density: 0.15" shadow="type: basic">
+    <a-scene id="escena" fog="type: exponential; color: #000808; density: 0.15">
         <a-sky color="#000505"></a-sky>
-        
+
         <a-entity id="rig" position="0 0 0">
-            <a-entity camera id="cam" position="0 1.6 0" look-controls="pointerLockEnabled: true" wasd-controls="acceleration: 25">
+            <a-entity camera id="cam" look-controls="pointerLockEnabled: true" wasd-controls="acceleration: 20" position="0 1.6 0">
                 <a-entity id="cuerpo" position="0 -1.2 -1.5">
-                    <a-entity id="linterna" light="type: spot; intensity: 10; distance: 70; color: #00ffff; penumbra: 0.5"></a-entity>
+                    <a-text id="label-jugador" value="S" color="#00ffff" align="center" width="10"></a-text>
+                    <a-entity id="linterna" light="type: spot; intensity: 12; distance: 85; color: #00ffff; penumbra: 0.6" visible="true"></a-entity>
                 </a-entity>
             </a-entity>
         </a-entity>
@@ -83,183 +78,207 @@
         <a-entity id="contenedor-niñas"></a-entity>
         <a-entity id="contenedor-curas"></a-entity>
 
-        <a-entity id="franchis" position="30 3 -30">
-            <a-text value="F" color="red" align="center" width="40" siempre-mirar></a-text>
-            <a-light type="point" color="red" intensity="2" distance="15"></a-light>
+        <a-entity id="franchis" position="35 3 -35">
+            <a-text value="F" color="#ff0000" align="center" width="45" siempre-mirar></a-text>
+            <a-light type="point" color="red" intensity="2.5" distance="18"></a-light>
         </a-entity>
     </a-scene>
 
     <script>
-        let modoActual = 'pc';
-        let activo = false, pausado = false, recolectadas = 0, salud = 100;
-        let linternaEncendida = true, velY = 0, enSuelo = true;
-        
-        // Variables Joystick
-        let joyX = 0, joyY = 0, joyActive = false;
-        const knob = document.getElementById('joystick-knob');
-        const joyCont = document.getElementById('joystick-container');
-
-        function elegirModo(m) {
-            modoActual = m;
-            document.getElementById('menu-dispositivo').style.display = 'none';
-            document.getElementById('pantalla-inicio').style.display = 'flex';
-            if(m === 'mobile') {
-                document.getElementById('joystick-container').style.display = 'block';
-                document.getElementById('controles-mobile').style.display = 'block';
-                document.getElementById('cam').removeAttribute('wasd-controls');
-            }
-        }
-
-        // LÓGICA JOYSTICK
-        joyCont.addEventListener('touchstart', e => { joyActive = true; });
-        window.addEventListener('touchmove', e => {
-            if(!joyActive) return;
-            let touch = e.touches[0];
-            let rect = joyCont.getBoundingClientRect();
-            let centerX = rect.left + rect.width/2;
-            let centerY = rect.top + rect.height/2;
-            let dx = touch.clientX - centerX;
-            let dy = touch.clientY - centerY;
-            let dist = Math.min(Math.sqrt(dx*dx + dy*dy), 40);
-            let angle = Math.atan2(dy, dx);
-            
-            joyX = (Math.cos(angle) * dist) / 40;
-            joyY = (Math.sin(angle) * dist) / 40;
-            
-            knob.style.transform = `translate(${joyX * 40}px, ${joyY * 40}px)`;
-        });
-        window.addEventListener('touchend', () => {
-            joyActive = false; joyX = 0; joyY = 0;
-            knob.style.transform = `translate(0,0)`;
-        });
-
-        // MECÁNICAS
         AFRAME.registerComponent('siempre-mirar', {
-            tick: function() {
-                let cam = this.el.sceneEl.camera;
-                if(cam) {
+            tick: function () {
+                var target = this.el.sceneEl.camera;
+                if (target) {
                     let p = new THREE.Vector3();
-                    cam.getWorldPosition(p);
+                    target.getWorldPosition(p);
                     this.el.object3D.lookAt(p);
                 }
             }
         });
 
-        function saltar() { if(enSuelo && activo) { velY = 0.25; enSuelo = false; } }
-        
-        function toggleLuz() {
-            linternaEncendida = !linternaEncendida;
-            document.getElementById('linterna').setAttribute('visible', linternaEncendida);
-            document.getElementById('escena').setAttribute('fog', 'density', linternaEncendida ? 0.15 : 1.5);
-            document.querySelectorAll('.objetivo, .item-cura').forEach(o => o.setAttribute('visible', linternaEncendida));
+        let activo = false, pausado = false, recolectadas = 0, totalObjetivo = 0;
+        let salud = 100, dañoFranchis = 25, invulnerable = false, curasExtrasContador = 0;
+        let velY = 0, enSuelo = true, linternaEncendida = true;
+        const LIMITE_MAPA = 105, gravedad = -0.015, impulsoSalto = 0.3;
+
+        function actualizarVida(valor) {
+            salud = Math.max(0, Math.min(100, salud + valor));
+            const fill = document.getElementById('barra-vida-fill');
+            fill.style.width = salud + "%";
+            document.getElementById('hp-text').innerText = salud;
+            fill.style.background = salud > 50 ? "#00ffff" : (salud > 25 ? "#ffff00" : "#ff0000");
+            if (salud <= 0 && activo) {
+                activo = false; document.exitPointerLock();
+                document.getElementById('pantalla-muerte').style.display = 'flex';
+            }
         }
 
-        // INPUTS
-        window.addEventListener('keydown', e => {
-            if(e.code === 'Space') saltar();
-            if(e.key.toLowerCase() === 'p') toggleLuz();
-            if(e.key === 'Escape') togglePausa();
-        });
-        document.getElementById('btn-jump').ontouchstart = saltar;
-        document.getElementById('btn-light').ontouchstart = toggleLuz;
-        document.getElementById('btn-pause-mob').ontouchstart = togglePausa;
+        function spawnCuracion(cerca = false) {
+            const container = document.getElementById('contenedor-curas');
+            let h = document.createElement('a-text');
+            h.setAttribute('value', 'H');
+            h.setAttribute('color', '#00ff00');
+            h.setAttribute('align', 'center');
+            h.setAttribute('width', '25');
+            h.setAttribute('class', 'item-cura');
+            h.setAttribute('siempre-mirar', '');
+            
+            let ang = Math.random() * Math.PI * 2;
+            let r = cerca ? (15 + Math.random() * 10) : (Math.random() * 90);
+            h.setAttribute('position', { x: Math.cos(ang)*r, y: 1.5, z: Math.sin(ang)*r });
+            
+            // Si la linterna está apagada, la H nace invisible
+            if (!linternaEncendida) h.setAttribute('visible', false);
+            
+            container.appendChild(h);
+        }
 
-        document.getElementById('btn-jugar').onclick = () => {
+        function toggleVisibilidadObjetos(estado) {
+            document.querySelectorAll('.objetivo, .item-cura').forEach(obj => {
+                obj.setAttribute('visible', estado);
+            });
+        }
+
+        window.addEventListener('keydown', (e) => { 
+            if (e.key.toLowerCase() === 'p' && activo && !pausado) {
+                linternaEncendida = !linternaEncendida;
+                document.getElementById('linterna').setAttribute('visible', linternaEncendida);
+                const escena = document.getElementById('escena');
+                
+                if (!linternaEncendida) {
+                    escena.setAttribute('fog', 'density', 1.5); // Mucha más oscuridad
+                    toggleVisibilidadObjetos(false);
+                } else {
+                    escena.setAttribute('fog', 'density', 0.15); // Normal
+                    toggleVisibilidadObjetos(true);
+                }
+            }
+            if (e.code === 'Space' && enSuelo && activo && !pausado) { velY = impulsoSalto; enSuelo = false; }
+            if (e.key === 'Escape') {
+                pausado = !pausado;
+                document.getElementById('pantalla-pausa').style.display = pausado ? 'flex' : 'none';
+                if (!pausado) document.querySelector('a-scene').canvas.requestPointerLock();
+                else document.exitPointerLock();
+            }
+        });
+
+        document.getElementById('btn-jugar').addEventListener('click', () => {
+            dañoFranchis = parseInt(document.getElementById('dificultad-select').value);
+            totalObjetivo = parseInt(document.getElementById('cantidad-input').value) || 12;
+            document.getElementById('total').innerText = totalObjetivo;
+            document.getElementById('p-nombre').innerText = "OP: " + document.getElementById('nombre-input').value.toUpperCase();
+            
+            for (let i = 0; i < totalObjetivo; i++) {
+                let n = document.createElement('a-text');
+                n.setAttribute('class', 'objetivo'); n.setAttribute('value', 'Y');
+                n.setAttribute('color', '#ff69b4'); n.setAttribute('align', 'center');
+                n.setAttribute('width', '20'); n.setAttribute('siempre-mirar', '');
+                let ang = Math.random() * Math.PI * 2, r = 20 + Math.random() * 70;
+                n.setAttribute('position', { x: Math.cos(ang)*r, y: 1.5, z: Math.sin(ang)*r });
+                n.userData = { vx: (Math.random()-0.5)*0.05, vz: (Math.random()-0.5)*0.05 };
+                document.getElementById('contenedor-niñas').appendChild(n);
+            }
+
+            // 2 H VERDES CERCA AL INICIO
+            spawnCuracion(true);
+            spawnCuracion(true);
+
+            // SECUENCIA DE H EXTRAS CADA MINUTO
+            setTimeout(() => {
+                let intervalH = setInterval(() => {
+                    if (!activo) { clearInterval(intervalH); return; }
+                    if (curasExtrasContador < 4) {
+                        spawnCuracion(false);
+                        curasExtrasContador++;
+                    } else {
+                        clearInterval(intervalH);
+                    }
+                }, 60000);
+            }, 240000);
+
             document.getElementById('pantalla-inicio').style.display = 'none';
             document.getElementById('hud').style.display = 'block';
+            document.querySelector('a-scene').canvas.requestPointerLock();
             activo = true;
-            if(modoActual === 'pc') document.querySelector('a-scene').canvas.requestPointerLock();
-            
-            // Spawn inicial de curas (H) CERCA
-            for(let i=0; i<2; i++) spawnH(true);
-            // Spawn Niñas (Y)
-            for(let i=0; i<12; i++) spawnY();
-        };
+        });
 
-        function spawnY() {
-            let n = document.createElement('a-text');
-            n.setAttribute('class', 'objetivo'); n.setAttribute('value', 'Y');
-            n.setAttribute('color', '#ff69b4'); n.setAttribute('align', 'center'); n.setAttribute('width', '20'); n.setAttribute('siempre-mirar', '');
-            let ang = Math.random()*6.28, r = 20 + Math.random()*70;
-            n.setAttribute('position', {x: Math.cos(ang)*r, y: 1.5, z: Math.sin(ang)*r});
-            n.userData = {vx: (Math.random()-0.5)*0.04, vz: (Math.random()-0.5)*0.04};
-            document.getElementById('contenedor-niñas').appendChild(n);
-        }
+        document.getElementById('btn-continuar').addEventListener('click', () => {
+            pausado = false; document.getElementById('pantalla-pausa').style.display = 'none';
+            document.querySelector('a-scene').canvas.requestPointerLock();
+        });
 
-        function spawnH(cerca) {
-            let h = document.createElement('a-text');
-            h.setAttribute('class', 'item-cura'); h.setAttribute('value', 'H');
-            h.setAttribute('color', '#00ff00'); h.setAttribute('align', 'center'); h.setAttribute('width', '25'); h.setAttribute('siempre-mirar', '');
-            let ang = Math.random()*6.28, r = cerca ? (10 + Math.random()*10) : (Math.random()*80);
-            h.setAttribute('position', {x: Math.cos(ang)*r, y: 1.5, z: Math.sin(ang)*r});
-            document.getElementById('contenedor-curas').appendChild(h);
-        }
+        function gameLoop() {
+            if (!activo || pausado) { requestAnimationFrame(gameLoop); return; }
 
-        function togglePausa() {
-            pausado = !pausado;
-            document.getElementById('pantalla-pausa').style.display = pausado ? 'flex' : 'none';
-        }
-        document.getElementById('btn-continuar').onclick = togglePausa;
+            const cam = document.getElementById('cam'), rig = document.getElementById('rig');
+            const rigPos = rig.getAttribute('position');
+            const camPos = new THREE.Vector3(); cam.object3D.getWorldPosition(camPos);
+            const fEntity = document.getElementById('franchis'), fPos = fEntity.object3D.position;
 
-        // BUCLE PRINCIPAL
-        function update() {
-            if(activo && !pausado) {
-                const rig = document.getElementById('rig');
-                const rigPos = rig.getAttribute('position');
-                const cam = document.getElementById('cam');
-                const camRot = cam.getAttribute('rotation');
-
-                // MOVIMIENTO MOBILE (Joystick)
-                if(modoActual === 'mobile' && (joyX !== 0 || joyY !== 0)) {
-                    let angle = (camRot.y) * Math.PI / 180;
-                    let speed = 0.15;
-                    rigPos.x += (Math.cos(angle) * joyX + Math.sin(angle) * joyY) * speed;
-                    rigPos.z += (Math.sin(angle) * -joyX + Math.cos(angle) * joyY) * speed;
-                }
-
-                // FISICA SALTO
-                if(!enSuelo) {
-                    velY -= 0.01;
-                    rigPos.y += velY;
-                    if(rigPos.y <= 0) { rigPos.y = 0; enSuelo = true; }
-                }
+            if (!enSuelo) {
+                velY += gravedad; rigPos.y += velY;
+                if (rigPos.y <= 0) { rigPos.y = 0; velY = 0; enSuelo = true; }
                 rig.setAttribute('position', rigPos);
-
-                // IA FRANCHIS
-                let camWorld = new THREE.Vector3(); cam.object3D.getWorldPosition(camWorld);
-                let f = document.getElementById('franchis').object3D.position;
-                let dist = f.distanceTo(camWorld);
-                
-                if(linternaEncendida || dist < 6) {
-                    let s = dist < 15 ? 0.02 : 0.006;
-                    f.x += (camWorld.x - f.x) * s; f.z += (camWorld.z - f.z) * s;
-                }
-
-                // COLISIONES
-                if(dist < 2.5 && !invulnerable) {
-                    salud -= 25; invulnerable = true;
-                    document.getElementById('barra-vida-fill').style.width = salud + "%";
-                    if(salud <= 0) { activo = false; document.getElementById('pantalla-muerte').style.display = 'flex'; }
-                    setTimeout(() => invulnerable = false, 2000);
-                }
-
-                // RECOGER Y / H
-                document.querySelectorAll('.objetivo').forEach(y => {
-                    if(y.object3D.position.distanceTo(camWorld) < 4) {
-                        y.parentNode.removeChild(y); recolectadas++;
-                        document.getElementById('count').innerText = recolectadas;
-                    }
-                });
-                document.querySelectorAll('.item-cura').forEach(h => {
-                    if(h.object3D.position.distanceTo(camWorld) < 4) {
-                        h.parentNode.removeChild(h); salud = Math.min(100, salud + 20);
-                        document.getElementById('barra-vida-fill').style.width = salud + "%";
-                    }
-                });
             }
-            requestAnimationFrame(update);
+
+            let distJugador = fPos.distanceTo(camPos);
+            let targetFranchis = null;
+
+            // IA FRANCHIS
+            if (linternaEncendida || distJugador < 6) {
+                targetFranchis = camPos;
+                cam.setAttribute('wasd-controls', 'acceleration', distJugador < 18 ? 65 : 20);
+            } 
+
+            // IA Y
+            document.querySelectorAll('.objetivo').forEach(n => {
+                let nPos = n.object3D.position;
+                let dF = nPos.distanceTo(fPos);
+                if (!targetFranchis && dF < 30) targetFranchis = nPos;
+                if (dF < 15) { 
+                    n.userData.vx = (nPos.x - fPos.x) * 0.09; n.userData.vz = (nPos.z - fPos.z) * 0.09;
+                } else if(Math.random() < 0.02) {
+                    n.userData.vx = (Math.random()-0.5)*0.04; n.userData.vz = (Math.random()-0.5)*0.04;
+                }
+                nPos.x += n.userData.vx; nPos.z += n.userData.vz;
+                
+                if (nPos.distanceTo(camPos) < 5 && n.classList.contains('objetivo')) {
+                    n.setAttribute('visible', false);
+                    n.classList.remove('objetivo');
+                    recolectadas++;
+                    document.getElementById('count').innerText = recolectadas;
+                    if (recolectadas >= totalObjetivo) {
+                        activo = false; document.getElementById('pantalla-victoria').style.display = 'flex';
+                        document.exitPointerLock();
+                    }
+                }
+            });
+
+            // CURACION (H)
+            document.querySelectorAll('.item-cura').forEach(c => {
+                if (c.object3D.position.distanceTo(camPos) < 4) { 
+                    actualizarVida(20); 
+                    c.parentNode.removeChild(c); 
+                }
+            });
+
+            if (targetFranchis) {
+                let speed = fPos.distanceTo(targetFranchis) < 20 ? 0.019 : 0.005;
+                fPos.x += (targetFranchis.x - fPos.x) * speed; fPos.z += (targetFranchis.z - fPos.z) * speed;
+            }
+
+            if (!invulnerable && distJugador < 2.5) {
+                actualizarVida(-dañoFranchis); invulnerable = true;
+                setTimeout(() => invulnerable = false, 2000);
+            }
+
+            if (Math.sqrt(camPos.x**2 + camPos.z**2) > LIMITE_MAPA) {
+                rig.setAttribute('position', {x: -camPos.x * 0.9, y: rigPos.y, z: -camPos.z * 0.9});
+            }
+
+            requestAnimationFrame(gameLoop);
         }
-        update();
+        gameLoop();
     </script>
 </body>
 </html>
